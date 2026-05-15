@@ -53,7 +53,7 @@ jobs:
           cx_client_secret: ${{ env.CX_CLIENT_SECRET }}
           project_name: ${{ github.repository }}
           branch: ${{ github.ref_name }}
-          additional_params: >-
+          scan_params: >-
             --scan-types sast,sca
             --report-format sarif
             --output-path .
