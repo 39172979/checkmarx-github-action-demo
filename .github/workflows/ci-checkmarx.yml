@@ -4,17 +4,22 @@ on:
   push:
     branches:
       - main
+      - master
       - develop
   pull_request:
     branches:
       - main
+      - master
       - develop
   workflow_dispatch:
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 permissions:
   contents: read
-  security-events: write
   actions: read
+  security-events: write
 
 jobs:
   build-test-and-checkmarx:
@@ -31,17 +36,45 @@ jobs:
       - name: Checkout source code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: Setup Node.js for demo app
         uses: actions/setup-node@v4
         with:
           node-version: "20"
-          cache: "npm"
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install
 
       - name: Run unit tests
         run: npm test
+
+      - name: Check Checkmarx secret configuration
+        shell: bash
+        run: |
+          echo "Checking Checkmarx secret configuration..."
+
+          if [ -z "$CX_BASE_URI" ]; then
+            echo "CX_BASE_URI is not configured."
+          else
+            echo "CX_BASE_URI is configured."
+          fi
+
+          if [ -z "$CX_TENANT" ]; then
+            echo "CX_TENANT is not configured."
+          else
+            echo "CX_TENANT is configured."
+          fi
+
+          if [ -z "$CX_CLIENT_ID" ]; then
+            echo "CX_CLIENT_ID is not configured."
+          else
+            echo "CX_CLIENT_ID is configured."
+          fi
+
+          if [ -z "$CX_CLIENT_SECRET" ]; then
+            echo "CX_CLIENT_SECRET is not configured."
+          else
+            echo "CX_CLIENT_SECRET is configured."
+          fi
 
       - name: Run Checkmarx One scan
         if: ${{ env.CX_BASE_URI != '' && env.CX_TENANT != '' && env.CX_CLIENT_ID != '' && env.CX_CLIENT_SECRET != '' }}
@@ -55,11 +88,3 @@ jobs:
           branch: ${{ github.ref_name }}
           scan_params: >-
             --scan-types sast,sca
-            --report-format sarif
-            --output-path .
-
-      - name: Upload Checkmarx SARIF report to GitHub Security
-        if: ${{ always() && hashFiles('cx_result.sarif') != '' }}
-        uses: github/codeql-action/upload-sarif@v3
-        with:
-          sarif_file: cx_result.sarif
