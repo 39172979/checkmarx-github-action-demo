@@ -45,7 +45,7 @@ jobs:
 
       - name: Run Checkmarx One scan
         if: ${{ env.CX_BASE_URI != '' && env.CX_TENANT != '' && env.CX_CLIENT_ID != '' && env.CX_CLIENT_SECRET != '' }}
-        uses: Checkmarx/ast-github-action@v2
+        uses: Checkmarx/ast-github-action@2.3.36
         with:
           base_uri: ${{ env.CX_BASE_URI }}
           cx_tenant: ${{ env.CX_TENANT }}
