@@ -47,35 +47,6 @@ jobs:
       - name: Run unit tests
         run: npm test
 
-      - name: Check Checkmarx secret configuration
-        shell: bash
-        run: |
-          echo "Checking Checkmarx secret configuration..."
-
-          if [ -z "$CX_BASE_URI" ]; then
-            echo "CX_BASE_URI is not configured."
-          else
-            echo "CX_BASE_URI is configured."
-          fi
-
-          if [ -z "$CX_TENANT" ]; then
-            echo "CX_TENANT is not configured."
-          else
-            echo "CX_TENANT is configured."
-          fi
-
-          if [ -z "$CX_CLIENT_ID" ]; then
-            echo "CX_CLIENT_ID is not configured."
-          else
-            echo "CX_CLIENT_ID is configured."
-          fi
-
-          if [ -z "$CX_CLIENT_SECRET" ]; then
-            echo "CX_CLIENT_SECRET is not configured."
-          else
-            echo "CX_CLIENT_SECRET is configured."
-          fi
-
       - name: Run Checkmarx One scan
         if: ${{ env.CX_BASE_URI != '' && env.CX_TENANT != '' && env.CX_CLIENT_ID != '' && env.CX_CLIENT_SECRET != '' }}
         uses: Checkmarx/ast-github-action@2.3.36
