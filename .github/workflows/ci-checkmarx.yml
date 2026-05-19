@@ -1,45 +1,34 @@
-name: CI with Checkmarx Scan
+name: CI and Deploy to Azure App Service
 
 on:
   push:
     branches:
       - main
       - master
-      - develop
-  pull_request:
-    branches:
-      - main
-      - master
-      - develop
   workflow_dispatch:
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+  AZURE_WEBAPP_NAME: app-github-actions-demo-你的唯一后缀
+  AZURE_WEBAPP_PACKAGE_PATH: "."
+  NODE_VERSION: "20"
 
 permissions:
   contents: read
-  actions: read
-  security-events: write
 
 jobs:
-  build-test-and-checkmarx:
-    name: Build, Test and Checkmarx Scan
+  build-test-and-deploy:
+    name: Build, Test and Deploy to Azure
     runs-on: ubuntu-latest
-
-    env:
-      CX_BASE_URI: ${{ secrets.CX_BASE_URI }}
-      CX_TENANT: ${{ secrets.CX_TENANT }}
-      CX_CLIENT_ID: ${{ secrets.CX_CLIENT_ID }}
-      CX_CLIENT_SECRET: ${{ secrets.CX_CLIENT_SECRET }}
 
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js for demo app
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: ${{ env.NODE_VERSION }}
 
       - name: Install dependencies
         run: npm install
@@ -47,15 +36,9 @@ jobs:
       - name: Run unit tests
         run: npm test
 
-      - name: Run Checkmarx One scan
-        if: ${{ env.CX_BASE_URI != ' ' && env.CX_TENANT != ' ' && env.CX_CLIENT_ID != ' ' && env.CX_CLIENT_SECRET != ' ' }}
-        uses: Checkmarx/ast-github-action@2.3.36
+      - name: Deploy to Azure App Service
+        uses: azure/webapps-deploy@v3
         with:
-          base_uri: ${{ env.CX_BASE_URI }}
-          cx_tenant: ${{ env.CX_TENANT }}
-          cx_client_id: ${{ env.CX_CLIENT_ID }}
-          cx_client_secret: ${{ env.CX_CLIENT_SECRET }}
-          project_name: ${{ github.repository }}
-          branch: ${{ github.ref_name }}
-          scan_params: >-
-            --scan-types sast,sca
+          app-name: ${{ env.AZURE_WEBAPP_NAME }}
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
