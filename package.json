@@ -1,7 +1,7 @@
 {
   "name": "checkmarx-github-action-demo",
   "version": "1.0.0",
-  "description": "Demo project for GitHub Actions and Checkmarx integration",
+  "description": "Demo project for GitHub Actions, Checkmarx and cloud deployment",
   "main": "src/app.js",
   "scripts": {
     "test": "jest",
@@ -11,7 +11,8 @@
     "github-actions",
     "checkmarx",
     "devsecops",
-    "sast"
+    "azure",
+    "gcp"
   ],
   "author": "demo",
   "license": "MIT",
