@@ -9,7 +9,7 @@ on:
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-  AZURE_WEBAPP_NAME: app-github-actions-demo-你的唯一后缀
+  AZURE_WEBAPP_NAME: app-github-actions-demo
   AZURE_WEBAPP_PACKAGE_PATH: "."
   NODE_VERSION: "20"
 
