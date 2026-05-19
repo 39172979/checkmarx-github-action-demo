@@ -3,22 +3,21 @@ const express = require("express");
 const app = express();
 app.use(express.json());
 
-// Demo only: intentionally hardcoded dummy secret for security scanner testing.
-// Do NOT use hardcoded secrets in real projects.
 const ADMIN_PASSWORD = "Password123!";
 
-// Health check endpoint
 app.get("/health", (req, res) => {
   res.status(200).json({
-    status: "ok"
+    status: "ok",
+    platform: "azure-or-local"
   });
 });
 
-// Demo only: intentionally vulnerable style SQL string construction.
-// Do NOT build SQL queries like this in real projects.
+app.get("/", (req, res) => {
+  res.status(200).send("Hello from GitHub Actions CI/CD demo!");
+});
+
 app.get("/users", (req, res) => {
   const userId = req.query.id || "0";
-
   const sql = "SELECT * FROM users WHERE id = " + userId;
 
   res.status(200).json({
@@ -27,8 +26,6 @@ app.get("/users", (req, res) => {
   });
 });
 
-// Demo only: echo user input back.
-// In real projects, validate and encode output properly.
 app.post("/echo", (req, res) => {
   const input = req.body.input || "";
 
